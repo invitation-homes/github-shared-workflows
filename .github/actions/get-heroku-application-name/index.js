@@ -23,7 +23,11 @@ const getHerokuApplicationName = (environment) => {
   if (fs.existsSync(REPOSITORY_METADATA_FILE)) {
     const metadata = fs.readFileSync(REPOSITORY_METADATA_FILE, "utf-8");
     const parsed = yaml.parse(metadata);
-    const herokuApplicationNameOverride = parsed["deployment"]["heroku-application-name"][environment];
+    const herokuApplicationNameOverride =
+      parsed &&
+      parsed["deployment"] &&
+      parsed["deployment"]["heroku-application-name"] &&
+      parsed["deployment"]["heroku-application-name"][environment];
     core.info(`Heroku Application Name Override: ${herokuApplicationNameOverride}`);
 
     if (herokuApplicationNameOverride) {
@@ -47,3 +51,4 @@ try {
   core.setFailed(error.message);
 }
 
+exports.getHerokuApplicationName = getHerokuApplicationName;
