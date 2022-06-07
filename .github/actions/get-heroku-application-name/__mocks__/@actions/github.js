@@ -2,8 +2,8 @@ module.exports = {
   context: {
     payload: {
       repository: {
-        name: "property-listing"
-      }
-    }
-  }
-}
+        name: 'property-listing',
+      },
+    },
+  },
+};

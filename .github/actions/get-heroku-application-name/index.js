@@ -3,7 +3,7 @@ const github = require('@actions/github');
 const fs = require('fs');
 const yaml = require('yaml');
 
-const REPOSITORY_METADATA_FILE = "./.repo-metadata.yaml";
+const REPOSITORY_METADATA_FILE = './.repo-metadata.yaml';
 
 /**
  * Returns the Heroku Application Name for the given environment
@@ -21,13 +21,13 @@ const getHerokuApplicationName = (environment) => {
   core.info(`Default Heroku Application Name: ${defaultHerokuApplicationName}`);
 
   if (fs.existsSync(REPOSITORY_METADATA_FILE)) {
-    const metadata = fs.readFileSync(REPOSITORY_METADATA_FILE, "utf-8");
+    const metadata = fs.readFileSync(REPOSITORY_METADATA_FILE, 'utf-8');
     const parsed = yaml.parse(metadata);
     const herokuApplicationNameOverride =
       parsed &&
-      parsed["deployment"] &&
-      parsed["deployment"]["heroku-application-name"] &&
-      parsed["deployment"]["heroku-application-name"][environment];
+      parsed['deployment'] &&
+      parsed['deployment']['heroku-application-name'] &&
+      parsed['deployment']['heroku-application-name'][environment];
     core.info(`Heroku Application Name Override: ${herokuApplicationNameOverride}`);
 
     if (herokuApplicationNameOverride) {
@@ -38,7 +38,7 @@ const getHerokuApplicationName = (environment) => {
   }
 
   return defaultHerokuApplicationName;
-}
+};
 
 try {
   const environment = core.getInput('environment');
@@ -46,7 +46,7 @@ try {
   core.info(`Environment: ${environment}`);
   core.info(`Heroku Application Name: ${herokuApplicationName}`);
 
-  core.setOutput("heroku_application_name", herokuApplicationName);
+  core.setOutput('heroku_application_name', herokuApplicationName);
 } catch (error) {
   core.setFailed(error.message);
 }

@@ -18,7 +18,7 @@ jobs:
         uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@main
         if: ${{ env.AUTO_DEPLOY_TO_DEV != 'false' }}
         with:
-          environment: "dev"
+          environment: 'dev'
 
       - name: Deploy to Dev
         uses: akhileshns/heroku-deploy@v3.12.12
@@ -33,7 +33,7 @@ jobs:
         uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@main
         if: ${{ env.AUTO_DEPLOY_TO_QA == 'true' }}
         with:
-          environment: "qa"
+          environment: 'qa'
 
       - name: Deploy to QA
         uses: akhileshns/heroku-deploy@v3.12.12
