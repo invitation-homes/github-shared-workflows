@@ -1,57 +1,65 @@
-<!--
-The name of the project. Can also be a logo or ASCII Art Header (this [site](http://patorjk.com/software/taag/#p=display&f=Slant&t=Pro%20WebApp) can generate nice ASCII art)	
--->	
-# Project Name
+# Github Shared Workflows
+Repository for GitHub actions and workflows that are intended to be shared across the Invitation Homes organization.
 
-<!---
-Some prose that describes the project, in as much detail as necessary to ensure the reader walks away with a basic understanding of the purpose of this repository. Diagrams included here can be useful to help the reader understand how the system is architectured. Links to other relevant documentation might also be useful.
--->
-Clear description of what the project does. 
+## Workflows
 
-<!-- 
-A description of how the code included in the project runs in various environments, including the URLs if that's appropriate
--->
-## Where Does This Run
+### deploy-heroku-application.yml
+Deploys the application to the specified environment in Heroku.  
 
-<!--
-Step-by-step instructions on how to install the code and any necessary dependencies
--->	
-## How to Use
+_Note: this workflow assumes that the Heroku application name 
+follows our standard of `invh-<application_name>-<environment>`. Applications that do not follow that standard must 
+specify the heroku application names in the deployment section of their
+[.repo-metadata.yaml](https://github.com/invitation-homes/technology-decisions/blob/main/resources/.repo-metadata.yaml) file_
 
-<!--
-Make liberal use of code blocks in the "How to Use" section, so it's easy to cut-and-paste the relevant commands into a terminal
+#### Example Usage
+```yaml
+name: Deploy Application
 
-Example (Node):
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: The target deployment environment
+        required: true
+        type: choice
+        options:
+          - "dev"
+          - "qa"
+          - "uat"
+          - "prod"
 
-```bash
-# Clone the repository
-git clone git@github.com:invitation-homes/my-cool-repo.git
-
-# Install dependencies
-npm install
-
-# Run the application
-npm start
+jobs:
+  call_shared_workflow:
+    uses: invitation-homes/github-shared-workflows/.github/workflows/deploy-heroku-application.yml@v1
+    secrets: inherit
+    with:
+      environment: ${{ github.event.inputs.environment }}
 ```
 
--->	
-```bash
-# Clone the repository
-git clone git@github.com:invitation-homes/my-cool-repo.git
+### auto-deploy-heroku-application.yml
+Automatically deploys the application to dev and optionally qa.  
 
-# Install dependencies
-# <how_to_install_dependencies>
+* Deployments to **dev** are _enabled by default_, but can be disabled by adding a 
+secret named `AUTO_DEPLOY_TO_DEV` with a value of false. 
+* Deployments to **qa** are _disabled by default_, but can be enabled by adding a 
+secret named `AUTO_DEPLOY_TO_QA` with a value of true.
 
-# Run the application
-# <how_to_start_the_application>
+_Note: this workflow assumes that the Heroku application name
+follows our standard of `invh-<application_name>-<environment>`. Applications that do not follow that standard must
+specify the heroku application names in the deployment section of their
+[.repo-metadata.yaml](https://github.com/invitation-homes/technology-decisions/blob/main/resources/.repo-metadata.yaml) file_
+
+#### Example Usage
+```yaml
+name: Auto Deploy Application
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  call_shared_workflow:
+    uses: invitation-homes/github-shared-workflows/.github/workflows/auto-deploy-heroku-application.yml@v1
+    secrets: inherit
 ```
-
-<!-- 
-Instructions on how to run locally -- necessary configuration files, secret configuration, etc. As a developer, this section combined with the previous section should give me all of the necessary information to check out and run the project locally	
--->	
-### Local Development
-
-<!-- 
-How is the code built and deployed? Where does the project run? What linting and security checks are in place? Where can you view test results & static code analysis?
--->	
-## CI/CD & Deployment

@@ -1,0 +1,12 @@
+name: 'Get Heroku Application Name'
+description: 'Returns the Heroku Application Name for the given environment'
+inputs:
+  environment:
+    description: 'The target deployment environment'
+    required: true
+outputs:
+  heroku_application_name:
+    description: 'The name of the application in Heroku for the given environment'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

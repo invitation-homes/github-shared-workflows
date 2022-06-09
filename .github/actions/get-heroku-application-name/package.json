@@ -1,0 +1,35 @@
+{
+  "name": "get-heroku-application-name",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "ncc build index.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "jest --watch",
+    "test:ci": "CI=true jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/invitation-homes/github-shared-workflows.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/invitation-homes/github-shared-workflows/issues"
+  },
+  "homepage": "https://github.com/invitation-homes/github-shared-workflows#readme",
+  "dependencies": {
+    "@actions/core": "1.8.2",
+    "@actions/github": "5.0.3",
+    "yaml": "2.1.1"
+  },
+  "devDependencies": {
+    "@types/jest": "28.1.1",
+    "@vercel/ncc": "0.34.0",
+    "jest": "28.1.1",
+    "prettier": "2.6.2"
+  }
+}

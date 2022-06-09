@@ -1,0 +1,44 @@
+on:
+  workflow_call:
+
+jobs:
+  deploy_to_heroku:
+    runs-on: ubuntu-latest
+
+    env:
+      AUTO_DEPLOY_TO_DEV: ${{ secrets.AUTO_DEPLOY_TO_DEV }}
+      AUTO_DEPLOY_TO_QA: ${{ secrets.AUTO_DEPLOY_TO_QA }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Heroku Application Name for dev
+        id: get-dev-heroku-application-name
+        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@main
+        if: ${{ env.AUTO_DEPLOY_TO_DEV != 'false' }}
+        with:
+          environment: 'dev'
+
+      - name: Deploy to Dev
+        uses: akhileshns/heroku-deploy@v3.12.12
+        if: ${{ env.AUTO_DEPLOY_TO_DEV != 'false' }}
+        with:
+          heroku_app_name: ${{ steps.get-dev-heroku-application-name.outputs.heroku_application_name }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+      - name: Get Heroku Application Name for qa
+        id: get-qa-heroku-application-name
+        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@main
+        if: ${{ env.AUTO_DEPLOY_TO_QA == 'true' }}
+        with:
+          environment: 'qa'
+
+      - name: Deploy to QA
+        uses: akhileshns/heroku-deploy@v3.12.12
+        if: ${{ env.AUTO_DEPLOY_TO_QA == 'true' }}
+        with:
+          heroku_app_name: ${{ steps.get-qa-heroku-application-name.outputs.heroku_application_name }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
