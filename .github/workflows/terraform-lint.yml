@@ -1,0 +1,65 @@
+name: Verify PR - Terraform Lint
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ~1
+
+      - name: Terraform Format
+        run: terraform fmt -check
+        working-directory: ${{ inputs.working-directory }}
+  tfsec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+
+      - name: Get Rules
+        uses: actions/checkout@v3
+        with:
+          repository: invitation-homes/terraform-linting-rules
+          path: ${{ inputs.working-directory }}/.tfsec
+          token: ${{ secrets.GH_REPO_ACCESS_TOKEN }}
+
+      - name: tfsec
+        uses: aquasecurity/tfsec-pr-commenter-action@main
+        with:
+          github_token: ${{ github.token }}
+  tflint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get Rules
+        uses: actions/checkout@v3
+        with:
+          repository: invitation-homes/terraform-linting-rules
+          path: ${{ inputs.working-directory }}/.tfsec
+          token: ${{ secrets.GH_REPO_ACCESS_TOKEN }}
+          
+      - uses: terraform-linters/setup-tflint@v1
+        name: Setup TFLint
+        with:
+          tflint_version: latest
+
+      - name: Initialize TFLint
+        working-directory: ${{ inputs.working-directory }}
+        run: tflint --init --config=${{ inputs.working-directory }}/.tfsec/.tflint.hcl
+
+      - name: Run TFLint
+        working-directory: ${{ inputs.working-directory }}
+        run: tflint --init --config=${{ inputs.working-directory }}/.tfsec/.tflint.hcl
