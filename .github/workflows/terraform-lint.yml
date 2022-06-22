@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Set Directories
         id: set-directories # Give it an id to handle to get step outputs in the outputs key above
-        run: echo "::set-output name=directories::$(echo ${{ inputs.directories }} | jq -R -c 'split(",")')
+        run: echo "::set-output name=directories::$(echo ${{ inputs.directories }} | jq -R -c 'split(",")')"
         # Define step output named dir base on ls command transformed to JSON thanks to jq
   fmt:
     runs-on: ubuntu-latest
