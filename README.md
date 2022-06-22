@@ -63,3 +63,52 @@ jobs:
     uses: invitation-homes/github-shared-workflows/.github/workflows/auto-deploy-heroku-application.yml@v1
     secrets: inherit
 ```
+
+### terraform-lint
+This workflow takes a specified directory and runs:
+* terraform fmt -check
+* tfsec with [custom rules](https://github.com/invitation-homes/terraform-linting-rules)
+* tflint with [custom rules](https://github.com/invitation-homes/terraform-linting-rules/blob/main/.tflint.hcl)
+
+#### Application Repo Example
+```yaml
+on: [pull_request]
+
+jobs:
+  terraform-lint:
+    uses: invitation-homes/github-shared-workflows/.github/workflows/terraform-lint.yml@v1
+    secrets: inherit
+    with:
+      working-directory: ./terraform
+```
+
+#### Mono Repo Example
+```yaml
+on: [pull_request]
+
+jobs:
+  directories: # Job that list subdirectories
+    runs-on: ubuntu-latest
+    outputs:
+      dir: ${{ steps.set-dirs.outputs.dir }} # generate output name dir by using inner step output
+    steps:
+      - name: Clone Repo
+        uses: actions/checkout@v3
+
+      - name: Get main branch
+        run: git fetch --no-tags --prune --depth=1 origin +refs/heads/main:refs/remotes/origin/main
+
+      - name: Set Directories
+        id: set-dirs # Give it an id to handle to get step outputs in the outputs key above
+        run: echo "::set-output name=dir::$(git diff --diff-filter=d --name-only origin/main HEAD | xargs -L1 dirname | uniq | jq -R -s -c 'split("\n")[:-1]')"
+        # Define step output named dir base on ls command transformed to JSON thanks to jq
+  terraform-lint:
+    needs: [directories] # Depends on previous job
+    strategy:
+      matrix:
+        dir: ${{ fromJson(needs.directories.outputs.dir) }} # List matrix strategy from directories dynamically
+    uses: invitation-homes/github-shared-workflows/.github/workflows/terraform-lint.yml@v1
+    secrets: inherit
+    with:
+      working-directory: ${{matrix.dir}}
+```
