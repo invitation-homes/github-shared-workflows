@@ -13,6 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Create a Tag for this Commit
+        id: create-commit-tag
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-commit-tag@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get Heroku Application Name for dev
         id: get-dev-heroku-application-name
         uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@main
