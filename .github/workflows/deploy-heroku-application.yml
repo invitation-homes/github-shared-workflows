@@ -19,8 +19,17 @@ jobs:
           environment: ${{ inputs.environment }}
 
       - name: Deploy to ${{ inputs.environment }}
+        id: deploy-application
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_app_name: ${{ steps.get-heroku-application-name.outputs.heroku_application_name }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+      - name: Create Deployment
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@main
+        with:
+          api-token: ${{ secrets.CI_CD_API_TOKEN }}
+          environment: ${{ inputs.environment }}
+          version: ${{ github.ref_name }}
+          isSuccessful: ${{ steps.deploy-application.outcome == 'success' }}
