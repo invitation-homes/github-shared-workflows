@@ -5,7 +5,7 @@ inputs:
     description: 'The target deployment environment'
     required: true
 outputs:
-  heroku_application_name:
+  heroku-application-name:
     description: 'The name of the application in Heroku for the given environment'
 runs:
   using: 'node16'

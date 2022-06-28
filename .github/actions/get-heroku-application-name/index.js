@@ -46,7 +46,7 @@ try {
   core.info(`Environment: ${environment}`);
   core.info(`Heroku Application Name: ${herokuApplicationName}`);
 
-  core.setOutput('heroku_application_name', herokuApplicationName);
+  core.setOutput('heroku-application-name', herokuApplicationName);
 } catch (error) {
   core.setFailed(error.message);
 }

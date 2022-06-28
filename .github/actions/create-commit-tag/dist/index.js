@@ -8954,7 +8954,7 @@ const run = async () => {
     });
   }
 
-  core.setOutput('tag_name', tagName);
+  core.setOutput('tag-name', tagName);
 }
 
 run().catch(error => core.setFailed(error.message));

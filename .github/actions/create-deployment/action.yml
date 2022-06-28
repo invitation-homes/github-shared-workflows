@@ -10,7 +10,7 @@ inputs:
   version:
     description: 'The version of the application that was deployed'
     required: true
-  isSuccessful:
+  is-successful:
     description: 'The status of deployment'
     required: true
 runs:

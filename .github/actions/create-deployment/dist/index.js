@@ -13919,7 +13919,7 @@ const run = async () => {
   const apiToken = core.getInput('api-token');
   const environment = core.getInput('environment');
   const version = core.getInput('version');
-  const isSuccessful = core.getInput('isSuccessful');
+  const isSuccessful = core.getInput('is-successful');
   core.info(`record-deployment() => ${version} was deployed to ${environment}`);
 
   await axios__WEBPACK_IMPORTED_MODULE_0___default().post(
