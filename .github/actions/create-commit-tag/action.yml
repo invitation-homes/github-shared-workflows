@@ -1,0 +1,12 @@
+name: 'Create tag for commit'
+description: 'Creates a unique tag for this commit'
+inputs:
+  github-token:
+    description: 'The token to use for interacting with GitHub '
+    required: true
+outputs:
+  tag_name:
+    description: 'The name of the tag that was created'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
