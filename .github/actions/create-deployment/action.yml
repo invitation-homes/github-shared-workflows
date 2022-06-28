@@ -1,0 +1,18 @@
+name: 'Create Deployment'
+description: 'Creates a deployment in the CI/CD database'
+inputs:
+  api-token:
+    description: 'The token to use for interacting with the CI/CD Automation API'
+    required: true
+  environment:
+    description: 'The environment to which the application was deployed'
+    required: true
+  version:
+    description: 'The version of the application that was deployed'
+    required: true
+  is-successful:
+    description: 'The status of deployment'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

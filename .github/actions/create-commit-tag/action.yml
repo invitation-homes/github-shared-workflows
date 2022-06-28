@@ -5,7 +5,7 @@ inputs:
     description: 'The token to use for interacting with GitHub '
     required: true
 outputs:
-  tag_name:
+  tag-name:
     description: 'The name of the tag that was created'
 runs:
   using: 'node16'

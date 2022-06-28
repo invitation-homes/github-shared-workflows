@@ -27,12 +27,22 @@ jobs:
           environment: 'dev'
 
       - name: Deploy to Dev
+        id: deploy-to-dev
         uses: akhileshns/heroku-deploy@v3.12.12
         if: ${{ env.AUTO_DEPLOY_TO_DEV != 'false' }}
         with:
-          heroku_app_name: ${{ steps.get-dev-heroku-application-name.outputs.heroku_application_name }}
+          heroku_app_name: ${{ steps.get-dev-heroku-application-name.outputs.heroku-application-name }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+      - name: Create Dev Deployment
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@main
+        if: ${{ env.AUTO_DEPLOY_TO_DEV != 'false' }}
+        with:
+          api-token: ${{ secrets.CI_CD_API_TOKEN }}
+          environment: 'dev'
+          version: ${{ steps.create-commit-tag.outputs.tag-name }}
+          is-successful: ${{ steps.deploy-to-dev.outcome == 'success' }}
 
       - name: Get Heroku Application Name for qa
         id: get-qa-heroku-application-name
@@ -42,9 +52,19 @@ jobs:
           environment: 'qa'
 
       - name: Deploy to QA
+        id: deploy-to-qa
         uses: akhileshns/heroku-deploy@v3.12.12
         if: ${{ env.AUTO_DEPLOY_TO_QA == 'true' }}
         with:
-          heroku_app_name: ${{ steps.get-qa-heroku-application-name.outputs.heroku_application_name }}
+          heroku_app_name: ${{ steps.get-qa-heroku-application-name.outputs.heroku-application-name }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+      - name: Create QA Deployment
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@main
+        if: ${{ env.AUTO_DEPLOY_TO_QA == 'true' }}
+        with:
+          api-token: ${{ secrets.CI_CD_API_TOKEN }}
+          environment: 'qa'
+          version: ${{ steps.create-commit-tag.outputs.tag-name }}
+          is-successful: ${{ steps.deploy-to-qa.outcome == 'success' }}
