@@ -8925,8 +8925,11 @@ const run = async () => {
   const packageJson = fs.readFileSync('./package.json', 'utf-8');
   const parsed = JSON.parse(packageJson);
   const shortSha = github.context.sha.substr(0, 7);
-  const tagName = `${parsed.version}-${github.context.runNumber}-${shortSha}`;
   const githubToken = core.getInput('github-token');
+  const includeBuildMetadata = core.getInput('include-build-metadata');
+  const tagName = (includeBuildMetadata === 'true')
+    ? `${parsed.version}-${github.context.runNumber}-${shortSha}`
+    : parsed.version;
   const octokit = github.getOctokit(githubToken);
 
   const existingReference = await octokit.rest.git.getRef({

@@ -18,6 +18,7 @@ jobs:
         uses: invitation-homes/github-shared-workflows/.github/actions/create-commit-tag@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          include-build-metadata: true
 
       - name: Get Heroku Application Name for dev
         id: get-dev-heroku-application-name
