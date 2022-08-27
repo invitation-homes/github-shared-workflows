@@ -14,7 +14,7 @@ jobs:
 
       - name: Get Heroku Application Name
         id: get-heroku-application-name
-        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@v1.2.0-beta
         with:
           environment: ${{ inputs.environment }}
 
@@ -27,7 +27,7 @@ jobs:
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
       - name: Create Deployment
-        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@v1.2.0-beta
         with:
           api-token: ${{ secrets.CI_CD_API_TOKEN }}
           environment: ${{ inputs.environment }}
@@ -35,7 +35,7 @@ jobs:
           is-successful: ${{ steps.deploy-application.outcome == 'success' }}
 
       - name: Create Production Tag
-        uses: invitation-homes/github-shared-workflows/.github/actions/create-commit-tag@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-commit-tag@v1.2.0-beta
         if: ${{ inputs.environment == 'prod' }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

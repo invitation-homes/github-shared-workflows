@@ -15,14 +15,14 @@ jobs:
 
       - name: Create a Tag for this Commit
         id: create-commit-tag
-        uses: invitation-homes/github-shared-workflows/.github/actions/create-commit-tag@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-commit-tag@v1.2.0-beta
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           include-build-metadata: true
 
       - name: Get Heroku Application Name for dev
         id: get-dev-heroku-application-name
-        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@v1.2.0-beta
         if: ${{ env.AUTO_DEPLOY_TO_DEV != 'false' }}
         with:
           environment: 'dev'
@@ -37,7 +37,7 @@ jobs:
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
       - name: Create Dev Deployment
-        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@v1.2.0-beta
         if: ${{ env.AUTO_DEPLOY_TO_DEV != 'false' }}
         with:
           api-token: ${{ secrets.CI_CD_API_TOKEN }}
@@ -47,7 +47,7 @@ jobs:
 
       - name: Get Heroku Application Name for qa
         id: get-qa-heroku-application-name
-        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/get-heroku-application-name@v1.2.0-beta
         if: ${{ env.AUTO_DEPLOY_TO_QA == 'true' }}
         with:
           environment: 'qa'
@@ -62,7 +62,7 @@ jobs:
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
       - name: Create QA Deployment
-        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@v1
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-deployment@v1.2.0-beta
         if: ${{ env.AUTO_DEPLOY_TO_QA == 'true' }}
         with:
           api-token: ${{ secrets.CI_CD_API_TOKEN }}
