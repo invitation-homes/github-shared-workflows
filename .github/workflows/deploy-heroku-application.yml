@@ -33,3 +33,10 @@ jobs:
           environment: ${{ inputs.environment }}
           version: ${{ github.ref_name }}
           is-successful: ${{ steps.deploy-application.outcome == 'success' }}
+
+      - name: Create Production Tag
+        uses: invitation-homes/github-shared-workflows/.github/actions/create-commit-tag@v1
+        if: ${{ inputs.environment == 'prod' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          include-build-metadata: false
