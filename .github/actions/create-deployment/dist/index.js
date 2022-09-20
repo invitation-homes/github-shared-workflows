@@ -14659,7 +14659,7 @@ const run = async () => {
   core.info(`record-deployment() => ${version} was deployed to ${environment}`);
 
   await axios__WEBPACK_IMPORTED_MODULE_0___default().post(
-    'https://api.invitationhomes.com/ci-cd/v1/deployments',
+    'https://ci-cd-api.invitationhomes.com/v1/deployments',
     {
       repository: github.context.payload.repository.name,
       environment,
