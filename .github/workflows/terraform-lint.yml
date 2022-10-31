@@ -97,7 +97,7 @@ jobs:
 
       - name: tfsec
         if: steps.check-tf-files.outputs.files_exists == 'true'
-        uses: aquasecurity/tfsec-pr-commenter-action@main
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
         with:
           github_token: ${{ github.token }}
           working_directory: ${{ matrix.directory }}
