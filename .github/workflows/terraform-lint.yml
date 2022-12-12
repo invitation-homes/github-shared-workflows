@@ -95,30 +95,64 @@ jobs:
           path: ${{ matrix.directory }}/.tfsec
           token: ${{ secrets.GH_REPO_ACCESS_TOKEN }}
 
-      # - name: tfsec
-      #   if: steps.check-tf-files.outputs.files_exists == 'true'
-      #   uses: aquasecurity/tfsec-pr-commenter-action@main
-      #   with:
-      #     github_token: ${{ github.token }}
-      #     working_directory: ${{ matrix.directory }}
+      - name: Install tfsec
+        if: steps.check-tf-files.outputs.files_exists == 'true'
+        run: curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+      
       - name: Run tfsec
         id: tfsec
         if: steps.check-tf-files.outputs.files_exists == 'true'
+        working-directory: ${{ matrix.directory }}
         run: |
-          tfsec --soft-fail 
+          # run tfsec and write the results to a results.json file
+          tfsec --concise-output --format json --out results.json
+          result_code=${PIPESTATUS[0]}
+          
+          # exit with the pertinent error code only after we have exposed the output for later steps 
+          exit $result_code
+        continue-on-error: true
       
-      - uses: actions/github-script@v6
+      - name: Read results.json
+        id: read-results
+        if: steps.check-tf-files.outputs.files_exists == 'true'
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ${{ matrix.directory }}/results.json
+
+      - name: Echo results.json
+        if: steps.read-results.outcome == 'success'
+        id: results
+        run: echo "${{ steps.read-results.outputs.content }}"
+      
+      - name: Comment on PR
+        uses: actions/github-script@v6
         if: steps.tfsec.outcome == 'failure'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // 
-            const output = `#### TFLint 📖\`${{ steps.tflint.outcome }}\`
+            // parse contents of results.json to a JS object, and extract pertinent information from it into a PR comment
+            var getFilename = function (str) {
+                return str.substring(str.lastIndexOf('/')+1)
+            }
+
+            const jsonObj = JSON.parse(`${{ steps.read-results.outputs.content }}`)
+
+            let comment = ""
+
+            for (const violation of jsonObj.results) {
+
+              let filename = getFilename(violation.location.filename)
+              let s = `${filename}:${violation.location.start_line}-${violation.location.end_line}: ${violation.resolution}, ${violation.severity}\n`
+
+              comment += s
+            }
+
+            const output = `#### tfsec 📖\`${{ steps.tfsec.outcome }}\`
 
             <details><summary>Directory: ${{ matrix.directory }}</summary>
 
             \`\`\`
-            ${tfsec}
+            ${comment}
             \`\`\`
 
             </details>`;
@@ -129,6 +163,7 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+
       - name: tfsec Status
         if: steps.tfsec.outcome == 'failure'
         run: exit 1
