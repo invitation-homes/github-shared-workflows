@@ -80,7 +80,7 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v3
-
+        
       - name: "Check for TF files"
         id: check-tf-files
         uses: andstor/file-existence-action@v1
@@ -123,7 +123,10 @@ jobs:
         if: steps.read-results.outcome == 'success'
         id: results
         run: echo "${{ steps.read-results.outputs.content }}"
-      
+
+      - name: Echo repo name
+        run: echo "${{ github.event.repository.name }}"
+
       - name: Comment on PR
         uses: actions/github-script@v6
         if: steps.tfsec.outcome == 'failure'
@@ -132,19 +135,19 @@ jobs:
           script: |
             // parse contents of results.json to a JS object, and extract pertinent information from it into a PR comment
             var getFilename = function (str) {
-                return str.substring(str.lastIndexOf('/')+1)
+                return str.substring('/home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}'.length)
             }
 
             const jsonObj = JSON.parse(`${{ steps.read-results.outputs.content }}`)
 
-            let comment = ""
+            let violations = new Set()
 
             for (const violation of jsonObj.results) {
 
               let filename = getFilename(violation.location.filename)
               let s = `${filename}:${violation.location.start_line}-${violation.location.end_line}: ${violation.resolution}, ${violation.severity}\n`
 
-              comment += s
+              violations.add(s)
             }
 
             const output = `#### tfsec 📖\`${{ steps.tfsec.outcome }}\`
@@ -152,7 +155,7 @@ jobs:
             <details><summary>Directory: ${{ matrix.directory }}</summary>
 
             \`\`\`
-            ${comment}
+            ${Array.from(violations).join('')}
             \`\`\`
 
             </details>`;
