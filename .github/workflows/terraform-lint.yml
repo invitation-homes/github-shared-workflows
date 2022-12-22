@@ -105,7 +105,7 @@ jobs:
         working-directory: ${{ matrix.directory }}
         run: |
           # run tfsec and write the results to a results.json file
-          tfsec --concise-output --format json --out results.json
+          tfsec --concise-output --minimum-severity medium --format json --out results.json
           result_code=${PIPESTATUS[0]}
           
           # exit with the pertinent error code only after we have exposed the output for later steps 
